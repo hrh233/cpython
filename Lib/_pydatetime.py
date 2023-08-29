@@ -2088,10 +2088,21 @@ class datetime(date):
         return self.isoformat(sep=' ')
 
     @classmethod
-    def strptime(cls, date_string, format):
-        'string, format -> new datetime parsed from a string (like time.strptime()).'
+    def strptime(cls, date_string, format, *, strict: bool = False):
+        "string, format -> new datetime parsed from a string (like time.strptime())."
         import _strptime
-        return _strptime._strptime_datetime(cls, date_string, format)
+
+        if strict:
+            try:
+                date = _strptime._strptime_datetime(cls, date_string, format)
+                if date.strftime(format) != date_string:
+                    raise ValueError("Invalid date string")
+                return date
+            except ValueError as e:
+                sys.stderr.write(e)
+        else:
+            return _strptime._strptime_datetime(cls, date_string, format)
+
 
     def utcoffset(self):
         """Return the timezone offset as timedelta positive east of UTC (negative west of
