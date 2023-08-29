@@ -2099,7 +2099,7 @@ class datetime(date):
                     raise ValueError("Invalid date string")
                 return date
             except ValueError as e:
-                sys.stderr.write(e)
+                sys.stderr.write(str(e) + "\n")
         else:
             return _strptime._strptime_datetime(cls, date_string, format)
 
